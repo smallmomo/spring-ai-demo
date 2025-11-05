@@ -1,0 +1,41 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: spring-ai-auto-sql
+  # Spring AI Azure OpenAI 配置 - 暂时注释掉
+  ai:
+    azure:
+      openai:
+        api-key: ${AZURE_OPENAI_API_KEY:your-azure-openai-api-key}
+        endpoint: ${AZURE_OPENAI_ENDPOINT:your-azure-openai-endpoint}
+
+
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/spring_ai_auto_sql?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # MyBatis-Plus 配置
+  mybatis-plus:
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    global-config:
+      db-config:
+        id-type: assign_id
+        logic-delete-field: deleted
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+    mapper-locations: classpath*:mapper/*.xml
+    type-aliases-package: com.example.springaiautosql.entity
+
+
+
+# 日志配置
+logging:
+  level:
+    com.example.springaiautosql: DEBUG
+    org.springframework.ai: DEBUG
