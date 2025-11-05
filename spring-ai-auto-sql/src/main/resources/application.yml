@@ -4,7 +4,7 @@ server:
 spring:
   application:
     name: spring-ai-auto-sql
-  # Spring AI Azure OpenAI 配置 - 暂时注释掉
+  # Spring AI Azure OpenAI 配置
   ai:
     azure:
       openai:
@@ -16,7 +16,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_ai_auto_sql?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: password
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # MyBatis-Plus 配置
@@ -30,12 +30,11 @@ spring:
         logic-delete-value: 1
         logic-not-delete-value: 0
     mapper-locations: classpath*:mapper/*.xml
-    type-aliases-package: com.example.springaiautosql.entity
-
-
+    type-aliases-package: com.example.model
 
 # 日志配置
 logging:
   level:
-    com.example.springaiautosql: DEBUG
+    com.example: DEBUG
     org.springframework.ai: DEBUG
+    org.springframework.jdbc.core: DEBUG

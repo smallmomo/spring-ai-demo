@@ -18,6 +18,8 @@
     <spring-boot.version>3.2.4</spring-boot.version>
     <spring-ai.version>1.0.0</spring-ai.version>
     <revision>1.0.0-SNAPSHOT</revision>
+    <mybatis-plus.version>3.5.6</mybatis-plus.version>
+    <mybatis-plus-ext.version>3.5.6-EXT684</mybatis-plus-ext.version>
   </properties>
 
   <dependencyManagement>
@@ -37,6 +39,37 @@
         <version>${spring-ai.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-annotation</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-core</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-extension</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.tangzc</groupId>
+        <artifactId>mybatis-plus-ext-base</artifactId>
+        <version>${mybatis-plus-ext.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
