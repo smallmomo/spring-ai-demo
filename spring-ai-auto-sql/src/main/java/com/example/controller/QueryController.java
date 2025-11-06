@@ -4,6 +4,7 @@ import com.example.dto.QueryRequest;
 import com.example.dto.QueryResponse;
 import com.example.model.TableInfo;
 import com.example.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
+@Slf4j
 public class QueryController {
 
     @Autowired
@@ -44,6 +46,7 @@ public class QueryController {
 
             // 4. 验证SQL
             if (!sqlValidationService.isValidSql(generatedSql)) {
+                log.error("SQL生成失败: {}", generatedSql);
                 String validationMessage = sqlValidationService.getValidationMessage(generatedSql);
                 return ResponseEntity.ok(QueryResponse.error("SQL生成失败: " + validationMessage));
             }

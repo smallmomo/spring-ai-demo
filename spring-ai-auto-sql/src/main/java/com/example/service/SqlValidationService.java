@@ -16,24 +16,29 @@ public class SqlValidationService {
     // 允许的WHERE条件关键词
     private static final List<String> ALLOWED_WHERE_KEYWORDS = Arrays.asList(
             "IS", "NOT", "NULL", "IN", "BETWEEN", "LIKE", "AND", "OR",
-            "=", "!=", "<>", ">", "<", ">=", "<=", "0", "1");
+            "=", "!=", "<>", ">", "<", ">=", "<=", "0", "1", "DELETED");
 
     public boolean isValidSql(String sql) {
         if (sql == null || sql.trim().isEmpty()) {
             return false;
         }
 
-        // 转换为大写进行检查
-        String upperSql = sql.toUpperCase().trim();
+        // 清理SQL内容，移除可能存在的```sql和```标记
+        String cleanedSql = cleanSql(sql);
+        String upperSql = cleanedSql.toUpperCase().trim();
 
         // 检查是否以SELECT开头
         if (!upperSql.startsWith("SELECT")) {
             return false;
         }
 
-        // 检查是否包含危险关键词
+        // 检查是否包含危险关键词（仅在语句级别，不检查字段名）
         for (String keyword : DANGEROUS_KEYWORDS) {
             if (upperSql.contains(keyword)) {
+                // 特殊处理：如果是字段名中的关键词，允许通过
+                if (isKeywordInFieldName(upperSql, keyword)) {
+                    continue;
+                }
                 return false;
             }
         }
@@ -44,6 +49,36 @@ public class SqlValidationService {
         }
 
         return true;
+    }
+
+    private String cleanSql(String sql) {
+        if (sql == null) {
+            return "";
+        }
+
+        String cleanedSql = sql.trim();
+
+        // 移除开头的```sql标记
+        if (cleanedSql.startsWith("```sql")) {
+            cleanedSql = cleanedSql.substring(6).trim();
+        }
+
+        // 移除结尾的```标记
+        if (cleanedSql.endsWith("```")) {
+            cleanedSql = cleanedSql.substring(0, cleanedSql.length() - 3).trim();
+        }
+
+        // 移除开头的```标记
+        if (cleanedSql.startsWith("```")) {
+            cleanedSql = cleanedSql.substring(3).trim();
+        }
+
+        // 移除结尾的```标记
+        if (cleanedSql.endsWith("```")) {
+            cleanedSql = cleanedSql.substring(0, cleanedSql.length() - 3).trim();
+        }
+
+        return cleanedSql;
     }
 
     public String getValidationMessage(String sql) {
@@ -60,13 +95,13 @@ public class SqlValidationService {
         // 检查是否包含危险关键词（仅在语句级别，不检查字段名）
         for (String keyword : DANGEROUS_KEYWORDS) {
             if (upperSql.contains(keyword)) {
-                // 特殊处理：如果关键词是DELETE且出现在字段名中，允许通过
-                if (keyword.equals("DELETE") &&
-                        (upperSql.contains(" IS_DELETED ") || upperSql.contains(" IS_DELETE ") ||
-                                upperSql.contains(", DELETED ") || upperSql.contains(" DELETED ") ||
-                                upperSql.startsWith("DELETED ") || upperSql.endsWith(" DELETED"))) {
-                    // 允许DELETED字段
-                    continue;
+                // 特殊处理：如果是DELETE关键词，检查是否为字段名
+                if (keyword.equals("DELETE")) {
+                    // 检查DELETE是否作为字段名使用
+                    if (isDeleteAsFieldName(upperSql)) {
+                        // 允许DELETED字段
+                        continue;
+                    }
                 }
                 return "SQL语句包含危险关键词: " + keyword;
             }
@@ -85,8 +120,9 @@ public class SqlValidationService {
             for (String condition : conditions) {
                 // 移除括号
                 condition = condition.replaceAll("[()]", "").trim();
-                if (condition.isEmpty())
+                if (condition.isEmpty()) {
                     continue;
+                }
 
                 // 使用更精确的正则表达式分割条件，避免误判字段名
                 // 匹配操作符 (=, !=, <>, >, <, >=, <=) 进行分割
@@ -94,8 +130,9 @@ public class SqlValidationService {
 
                 for (String part : parts) {
                     part = part.trim();
-                    if (part.isEmpty())
+                    if (part.isEmpty()) {
                         continue;
+                    }
 
                     // 检查是否为危险关键词（仅检查完整的单词，避免误判字段名）
                     if (isDangerousKeyword(part)) {
@@ -124,6 +161,62 @@ public class SqlValidationService {
                 return true;
             }
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 检查DELETE是否作为字段名使用
+     * 
+     * @return true如果DELETE仅作为字段名使用，false如果同时存在DELETE操作和字段名
+     */
+    private boolean isDeleteAsFieldName(String upperSql) {
+        // 检查是否存在DELETE操作（危险操作）
+        boolean hasDeleteOperation = upperSql.contains("DELETE ") && !upperSql.contains("DELETE FROM");
+
+        // 检查是否存在删除字段
+        boolean hasDeleteField = upperSql.contains(" IS_DELETED ") ||
+                upperSql.contains(" IS_DELETE ") ||
+                upperSql.contains(", DELETED ") ||
+                upperSql.contains(" DELETED ") ||
+                upperSql.contains("DELETED ") ||
+                upperSql.contains(" DELETED");
+
+        // 如果同时存在DELETE操作和删除字段，拒绝
+        if (hasDeleteOperation && hasDeleteField) {
+            return false;
+        }
+
+        // 如果只有删除字段，允许
+        return hasDeleteField;
+    }
+
+    /**
+     * 检查关键词是否作为字段名使用
+     */
+    private boolean isKeywordInFieldName(String upperSql, String keyword) {
+        // 检查关键词是否作为字段名使用
+        String[] fieldPatterns = {
+                " " + keyword + " ", ", " + keyword + " ", " " + keyword + ",",
+                " " + keyword + ";", " " + keyword + "\n", " " + keyword + "\r",
+                keyword + " ", keyword + ",", keyword + ";", keyword + "\n", keyword + "\r"
+        };
+
+        // 检查是否在SELECT列表中
+        if (upperSql.contains("SELECT") && upperSql.contains(keyword)) {
+            String selectPart = upperSql.substring(upperSql.indexOf("SELECT") + 6,
+                    upperSql.indexOf("FROM")).trim();
+            if (selectPart.contains(keyword)) {
+                return true;
+            }
+        }
+
+        // 检查是否在字段名中
+        for (String pattern : fieldPatterns) {
+            if (upperSql.contains(pattern)) {
+                return true;
+            }
         }
 
         return false;
