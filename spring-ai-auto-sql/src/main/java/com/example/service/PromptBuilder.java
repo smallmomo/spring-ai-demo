@@ -42,9 +42,13 @@ public class PromptBuilder {
         prompt.append("1. 只生成SELECT查询语句，不允许使用INSERT、UPDATE、DELETE、DROP等操作\n");
         prompt.append("2. 使用参数化查询，避免SQL注入\n");
         prompt.append("3. 基于提供的数据库结构生成准确的SQL\n");
-        prompt.append("4. 如果问题无法用现有表结构回答，请说明原因\n\n");
+        prompt.append("4. 如果问题无法用现有表结构回答，请说明原因\n");
+        prompt.append("5. 严格只返回SQL语句，不要包含任何额外的解释、符号、标记、代码块或格式标记\n");
+        prompt.append("6. 不要使用```、```sql、markdown代码块等任何格式化标记\n");
+        prompt.append("7. 不要包含任何说明文字，只返回SQL语句本身\n");
+        prompt.append("8. 确保SQL语句可以直接执行，不要包含任何非SQL内容\n\n");
 
-        prompt.append("请生成SQL查询语句：");
+        prompt.append("请严格按照上述要求生成SQL查询语句，只返回纯SQL语句：");
 
         return prompt.toString();
     }

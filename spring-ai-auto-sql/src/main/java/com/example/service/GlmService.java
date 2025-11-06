@@ -61,14 +61,36 @@ public class GlmService {
                     if (!choices.isEmpty()) {
                         Map<String, Object> choice = choices.get(0);
                         Map<String, Object> message = (Map<String, Object>) choice.get("message");
-                        return (String) message.get("content");
+                        String content = (String) message.get("content");
+
+                        // 清理SQL内容，移除```sql和```标记
+                        content = content.trim();
+                        if (content.startsWith("```sql")) {
+                            content = content.substring(6).trim();
+                        }
+                        if (content.endsWith("```")) {
+                            content = content.substring(0, content.length() - 3).trim();
+                        }
+
+                        return content;
                     }
                 } else if (choicesObj instanceof Map) {
                     // 处理choices字段可能是Map的情况
                     Map<String, Object> choiceMap = (Map<String, Object>) choicesObj;
                     Map<String, Object> choice = (Map<String, Object>) choiceMap.get("0");
                     Map<String, Object> message = (Map<String, Object>) choice.get("message");
-                    return (String) message.get("content");
+                    String content = (String) message.get("content");
+
+                    // 清理SQL内容，移除```sql和```标记
+                    content = content.trim();
+                    if (content.startsWith("```sql")) {
+                        content = content.substring(6).trim();
+                    }
+                    if (content.endsWith("```")) {
+                        content = content.substring(0, content.length() - 3).trim();
+                    }
+
+                    return content;
                 }
 
                 throw new RuntimeException("GLM API响应格式异常: 无法解析choices字段");
