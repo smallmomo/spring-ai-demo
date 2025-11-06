@@ -4,12 +4,26 @@ server:
 spring:
   application:
     name: spring-ai-auto-sql
-  # Spring AI Azure OpenAI 配置
+  # Spring AI AI模型配置
   ai:
+    # 模型类型选择: openai, glm
+    provider: ${AI_PROVIDER:glm}
+    
+    # OpenAI 配置
     azure:
       openai:
         api-key: ${AZURE_OPENAI_API_KEY:your-azure-openai-api-key}
         endpoint: ${AZURE_OPENAI_ENDPOINT:your-azure-openai-endpoint}
+
+    
+    # GLM 配置
+    glm:
+      api-key: ${GLM_API_KEY:your-glm-api-key}
+      api-url: ${GLM_API_URL:https://open.bigmodel.cn/api/paas/v4/chat/completions}
+      chat:
+        options:
+          model: glm-4.5
+          temperature: 0.1
 
 
   # 数据库配置
@@ -36,5 +50,3 @@ spring:
 logging:
   level:
     com.example: DEBUG
-    org.springframework.ai: DEBUG
-    org.springframework.jdbc.core: DEBUG
