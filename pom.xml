@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.7</version>
+    <version>3.4.2</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.renpho.erp</groupId>
@@ -23,7 +23,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-ai.version>1.0.3</spring-ai.version>
+    <spring-ai.version>1.0.0</spring-ai.version>
     <revision>1.0.0-SNAPSHOT</revision>
     <mybatis-plus.version>3.5.6</mybatis-plus.version>
     <mybatis-plus-ext.version>3.5.6-EXT684</mybatis-plus-ext.version>

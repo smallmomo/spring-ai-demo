@@ -21,8 +21,9 @@ public class McpClientController {
     private final ChatClient chatClient;
 
     @Autowired
-    public McpClientController(ChatClient.Builder mcpChatClientBuilder, ToolCallbackProvider tools) {
-        this.chatClient = mcpChatClientBuilder.defaultTools(tools).build();
+    public McpClientController(ChatClient.Builder mcpChatClientBuilder) {
+        // 客户端不传本地工具对象，而是通过 MCP Server 的工具回调调用
+        this.chatClient = mcpChatClientBuilder.build();
     }
 
     @PostMapping("/ask")
