@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: my-agi
+  ai:
+    mcp:
+      server:
+        name: my-mcp-server
+        version: 1.0.0
+#        type: ASYNC
+#        sse-endpoint: /sse/my-agi
+server:
+  port: 8081

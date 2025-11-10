@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.7</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
   <groupId>com.renpho.erp</groupId>
   <artifactId>spring-ai-demo</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -9,14 +15,15 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>spring-ai-auto-sql</module>
+      <module>mcp-weather-server</module>
+    <module>mcp-weather-client</module>
   </modules>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot.version>3.2.4</spring-boot.version>
-    <spring-ai.version>1.0.0</spring-ai.version>
+    <spring-ai.version>1.0.3</spring-ai.version>
     <revision>1.0.0-SNAPSHOT</revision>
     <mybatis-plus.version>3.5.6</mybatis-plus.version>
     <mybatis-plus-ext.version>3.5.6-EXT684</mybatis-plus-ext.version>
@@ -24,14 +31,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Spring Boot BOM -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- Spring AI BOM -->
       <dependency>
         <groupId>org.springframework.ai</groupId>
@@ -73,4 +72,35 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+
+  <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>central-portal-snapshots</id>
+      <name>Central Portal Snapshots</name>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>
